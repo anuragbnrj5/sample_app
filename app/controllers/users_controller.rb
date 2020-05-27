@@ -9,8 +9,13 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
-    @microposts = @user.microposts.paginate(page: params[:page])
+    @user = User.find_by(id: params[:id])
+    if !@user.nil?
+      @microposts = @user.microposts.paginate(page: params[:page])
+    else
+      flash[:danger] = "User not found"
+      redirect_to users_url
+    end
   end
 
   def new
@@ -29,38 +34,63 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.find_by(id: params[:id])
+    if @user.nil?
+      flash[:danger] = "User not found"
+      redirect_to root_url
+    end
   end
 
   def update
-    @user = User.find(params[:id])
-    if @user.update_attributes(user_params)
-      # Handle a successful update.
-      flash[:success] = "Profile updated"
-      redirect_to @user
+    @user = User.find_by(id: params[:id])
+    if !@user.nil?
+      if @user.update_attributes(user_params)
+        # Handle a successful update.
+        flash[:success] = "Profile updated"
+        redirect_to @user
+      else
+        render 'edit'
+      end
     else
-      render 'edit'
+      flash[:danger] = "User not found"
+      redirect_to root_url
     end
   end
 
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User deleted"
-    redirect_to users_url
+    @user = User.find_by(id: params[:id])
+    if !@user.nil?
+      @user.destroy
+      flash[:success] = "User deleted"
+      redirect_to users_url
+    else
+      flash[:danger] = "User not found"
+      redirect_to users_url
+    end
   end
 
   def following
     @title = "Following"
-    @user  = User.find(params[:id])
-    @users = @user.following.paginate(page: params[:page])
-    render 'show_follow'
+    @user  = User.find_by(id: params[:id])
+    if !@user.nil?
+      @users = @user.following.paginate(page: params[:page])
+      render 'show_follow'
+    else
+      flash[:danger] = "User not found"
+      redirect_to users_url
+    end
   end
 
   def followers
     @title = "Followers"
-    @user  = User.find(params[:id])
-    @users = @user.followers.paginate(page: params[:page])
-    render 'show_follow'
+    @user  = User.find_by(id: params[:id])
+    if !@user.nil?
+      @users = @user.followers.paginate(page: params[:page])
+      render 'show_follow'
+    else
+      flash[:danger] = "User not found"
+      redirect_to users_url
+    end
   end
 
   private
@@ -74,8 +104,16 @@ class UsersController < ApplicationController
     
     # Confirms the correct user.
     def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
+      @user = User.find_by(id: params[:id])
+      if !@user.nil?
+        if !current_user?(@user)
+          flash[:danger] = "Not Authorized"
+          redirect_to(root_url)
+        end
+      else
+        flash[:danger] = "User not found"
+        redirect_to root_url
+      end
     end
 
     # Confirms an admin user.
