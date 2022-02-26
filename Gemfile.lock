@@ -232,7 +232,7 @@ GEM
       rails (>= 2.3.3)
     mini_magick (4.9.4)
     mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
+    mini_portile2 (2.8.0)
     minitest (5.14.1)
     minitest-reporters (1.0.5)
       ansi
@@ -241,8 +241,9 @@ GEM
       ruby-progressbar
     multi_json (1.14.1)
     nenv (0.3.0)
-    nokogiri (1.10.9)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.13.3)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -251,6 +252,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     puma (3.12.6)
+    racc (1.6.0)
     rack (1.6.13)
     rack-test (0.6.3)
       rack (>= 1.0)
